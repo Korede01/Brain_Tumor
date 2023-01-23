@@ -1,2 +1,2 @@
 # Brain_Tumor
-Brain Tumor Prediction Model Using CNN Model
+Brain Tumor Prediction Model Using CNN Algorithm
