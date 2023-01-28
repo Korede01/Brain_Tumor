@@ -39,8 +39,6 @@ number_of_images = {}
 for dir in os.listdir(ROOT_DIR):
     number_of_images[dir] = len(os.listdir(os.path.join(ROOT_DIR, dir)))
 
-#print(number_of_images.items())
-
 #Split Dataset
 #70% for Train Data
 #15% for Validation
@@ -117,16 +115,9 @@ test_data = preprocessingImages2(path)
 path = "C:/Users/LENOVO/Documents/Project/Brain Tumor/val"
 val_data = preprocessingImages2(path)
 
-#Early Stopping
-es = EarlyStopping(monitor="val_accuracy", min_delta=0.01, patience=7, verbose=1, mode='auto')
-
-#Model check point
-mc = ModelCheckpoint(monitor="val_accuracy", filepath="./bestmodel.h5", verbose=1, save_best_only=True, mode='auto')
-
-cd = [es, mc]
 
 #Model Training
-hs = model.fit_generator(generator=train_data, steps_per_epoch=8, epochs=10, verbose=1, validation_data=val_data, validation_steps=16, callbacks=cd)
+hist = model.fit_generator(train_data, epochs=100, validation_data=val_data, verbose=1,)
 
 #Model Accuracy
 model = load_model("C:/Users/LENOVO/Documents/Project/Brain Tumor/bestmodel.h5")
@@ -138,17 +129,19 @@ print(f"The accuracy is {acc*100} %")
 path = "C:/Users/LENOVO/Documents/Project/Brain Tumor/brain_tumor_dataset/yes/Y25.jpg"
 
 img = load_img(path, target_size= (224, 224))
-input_arr = img_to_array(img)/255
 
-plt.imshow(input_arr)
+i = img_to_array(img)/255
+
+plt.imshow(i)
 plt.show()
 
-input_arr = np.expand_dims(input_arr, axis=0)
+input_arr = np.array([i])
 pred = (model.predict(input_arr)[0][0] > 0.5).astype("int32")
+#pred = np.argmax(model.predict(input_arr),axis=0)
 
 
 if pred == 0:
-    print("The MRI is having a Tumor")
-else:
     print("The MRI is not having a Tumor")
+else:
+    print("The MRI is having a Tumor")
 
